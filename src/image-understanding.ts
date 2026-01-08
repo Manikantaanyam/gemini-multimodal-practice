@@ -1,9 +1,15 @@
 import { IMAGE_PROMPT_V2 } from "./prompts/image-prompts.js";
 import { Gemini } from "./gemini.js";
 import { createUserContent, createPartFromUri } from "@google/genai";
+import fs from "fs";
+
+// There are two ways to provide an image to the model
+// 1. passing inline image data: for small files (total req size less than 20MB including prompt)
+// 2. using file api (used in this file)
 
 const ai = Gemini();
 
+// using the files api
 async function ImageUnderstanding(prompt: string) {
   const image = await ai.files.upload({
     file: "gemini-practice/src/assets/harkirat-bounty.png",
@@ -23,4 +29,29 @@ async function ImageUnderstanding(prompt: string) {
   console.log(reponse.text);
 }
 
-ImageUnderstanding(IMAGE_PROMPT_V2);
+// By passing inline data
+async function ImageUnderstandingByPassingInlineImageData(prompt: string) {
+  const base64ImageFile = fs.readFileSync(
+    "E:/DSA_PREP/gemini-practice/src/assets/harkirat-bounty.png",
+    { encoding: "base64" }
+  );
+
+  const content = [
+    {
+      inlineData: {
+        mimeType: "image/jpeg",
+        data: base64ImageFile,
+      },
+    },
+    { text: prompt },
+  ];
+
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: content,
+  });
+
+  console.log(response.text);
+}
+
+ImageUnderstandingByPassingInlineImageData(IMAGE_PROMPT_V2);

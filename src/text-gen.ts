@@ -3,7 +3,9 @@ import { Gemini } from "./gemini.js";
 const ai = Gemini();
 
 async function main(prompt: string) {
-  const response = await ai.models.generateContent({
+  // for streaming generateContentStream and looping over the response for answer
+  // for no streaming generateContent
+  const response = await ai.models.generateContentStream({
     model: "gemini-2.5-flash",
     contents: prompt,
     config: {
@@ -16,10 +18,14 @@ async function main(prompt: string) {
     },
   });
 
-  console.log(response.text);
+  for await (const chunk of response) {
+    console.log(chunk.text);
+  }
 }
 
 // The Gemini API is stateless, so the model treats every API request independently
 // and doesn't have access to thought context from previous turns in multi-turn interactions.
 
-main("what is the future for solona, is there any scope for it considering all the trends.");
+main(
+  "what is the future for solona, is there any scope for it considering all the trends."
+);
