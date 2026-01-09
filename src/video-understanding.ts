@@ -1,7 +1,8 @@
 import { Gemini } from "./gemini.js";
 import { createPartFromUri, createUserContent } from "@google/genai";
-import { VIDEO_PROMPT_V1 } from "./prompts/video-prompt.js";
+import { EFFICIENT_PROMPT, VIDEO_PROMPT_V1 } from "./prompts/video-prompt.js";
 import fs from "fs";
+import { UI_EXTRACT_PROMPT } from "./prompts/ui.js";
 
 // There are 3 ways to pass videos as input
 // 1. Upload the file ( use this approach for files larger than 20MB )
@@ -10,9 +11,12 @@ import fs from "fs";
 
 const ai = Gemini();
 
-export async function VideoUnderstandingByFilesApi(prompt: string) {
+export async function VideoUnderstandingByFilesApi(
+  prompt: string,
+  path: string
+) {
   const myfile = await ai.files.upload({
-    file: "E:/DSA_PREP/gemini-practice/src/assets/eden.mp4",
+    file: path,
     config: { mimeType: "video/mp4" },
   });
 
@@ -31,11 +35,11 @@ export async function VideoUnderstandingByFilesApi(prompt: string) {
   console.log(response.text);
 }
 
-export async function VideoUnderstandingByPassingInlineData(prompt: string) {
-  const base64VideoFile = fs.readFileSync(
-    "E:/DSA_PREP/gemini-practice/src/assets/eden.mp4",
-    { encoding: "base64" }
-  );
+export async function VideoUnderstandingByPassingInlineData(
+  prompt: string,
+  path: string
+) {
+  const base64VideoFile = fs.readFileSync(path, { encoding: "base64" });
 
   const content = [
     {
@@ -71,5 +75,3 @@ export async function VideoUnderstandingByPassingYoutubeURL(prompt: string) {
   });
   console.log(response.text);
 }
-
-VideoUnderstandingByPassingYoutubeURL(VIDEO_PROMPT_V1);

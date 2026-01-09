@@ -10,9 +10,9 @@ import fs from "fs";
 const ai = Gemini();
 
 // using the files api
-async function ImageUnderstanding(prompt: string) {
+export async function ImageUnderstanding(prompt: string, path: string) {
   const image = await ai.files.upload({
-    file: "gemini-practice/src/assets/harkirat-bounty.png",
+    file: path,
   });
 
   if (!image.uri || !image.mimeType) {
@@ -30,7 +30,10 @@ async function ImageUnderstanding(prompt: string) {
 }
 
 // By passing inline data
-async function ImageUnderstandingByPassingInlineImageData(prompt: string) {
+export async function ImageUnderstandingByPassingInlineImageData(
+  prompt: string,
+  path: string
+) {
   const base64ImageFile = fs.readFileSync(
     "E:/DSA_PREP/gemini-practice/src/assets/harkirat-bounty.png",
     { encoding: "base64" }
@@ -53,5 +56,3 @@ async function ImageUnderstandingByPassingInlineImageData(prompt: string) {
 
   console.log(response.text);
 }
-
-ImageUnderstandingByPassingInlineImageData(IMAGE_PROMPT_V2);
